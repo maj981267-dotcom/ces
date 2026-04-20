@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const currentRecord = await query(
       'SELECT completion_status FROM word_study_records WHERE word = ?',
       [word]
-    );
+    ) as any[];
 
     if (!currentRecord || !Array.isArray(currentRecord) || currentRecord.length === 0) {
       return NextResponse.json(

@@ -4,7 +4,7 @@ import { query } from '@/lib/db';
 // 获取复习规则
 export async function GET() {
   try {
-    const rules = await query('SELECT rule_name, offset_days, start_time, end_time FROM review_rules ORDER BY rule_name');
+    const rules = await query('SELECT rule_name, offset_days, start_time, end_time FROM review_rules ORDER BY rule_name') as any[];
     
     return NextResponse.json({
       success: true,

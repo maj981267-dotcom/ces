@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         }
 
         // 检查数据库中是否已存在该单词
-        const existingWordResult = await query('SELECT word FROM words WHERE word = ?', [wordData.word]);
+        const existingWordResult = await query('SELECT word FROM words WHERE word = ?', [wordData.word]) as any[];
         
         const isDuplicate = existingWordResult && 
                            Array.isArray(existingWordResult) && 

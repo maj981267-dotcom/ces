@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       FROM word_study_records wsr
       JOIN words w ON wsr.word = w.word
       ORDER BY wsr.created_at DESC
-    `);
+    `) as any[];
 
     console.log('查询到的记录数:', studyRecords?.length || 0);
 
@@ -51,7 +51,18 @@ export async function POST(request: NextRequest) {
       try {
         console.log(`\n=== 处理第 ${recordIndex + 1} 条记录: ${record.word} ===`);
         
-        const wordDebug = {
+        const wordDebug: {
+          word: string;
+          stages: Array<{
+            stage: string;
+            status: any;
+            timeRange: any;
+            decision: string;
+            shouldShow: boolean;
+          }>;
+          shouldShow: boolean;
+          reason: string;
+        } = {
           word: record.word,
           stages: [],
           shouldShow: false,
@@ -186,7 +197,8 @@ export async function POST(request: NextRequest) {
             
             wordDebug.stages.push(stageDebug);
           } catch (timeError) {
-            stageDebug.decision = `时间解析错误: ${timeError.message}`;
+            const errorMessage = timeError instanceof Error ? timeError.message : String(timeError);
+            stageDebug.decision = `时间解析错误: ${errorMessage}`;
             console.error(`    时间解析错误:`, timeError);
             wordDebug.stages.push(stageDebug);
             continue;
@@ -217,7 +229,7 @@ export async function POST(request: NextRequest) {
           word: record.word,
           stages: [],
           shouldShow: false,
-          reason: `处理错误: ${recordError.message}`
+          reason: `处理错误: ${recordError instanceof Error ? recordError.message : String(recordError)}`
         });
         continue;
       }

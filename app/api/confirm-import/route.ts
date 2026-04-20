@@ -5,20 +5,20 @@ import { query } from '@/lib/db';
 async function generateStudyRecord(word: string) {
   try {
     // 检查是否已存在学习记录
-    const existingRecord = await query('SELECT id FROM word_study_records WHERE word = ?', [word]);
+    const existingRecord = await query('SELECT id FROM word_study_records WHERE word = ?', [word]) as any[];
     if (existingRecord && Array.isArray(existingRecord) && existingRecord.length > 0) {
       // 如果已存在，删除旧记录重新生成
       await query('DELETE FROM word_study_records WHERE word = ?', [word]);
     }
 
     // 获取复习规则
-    const reviewRules = await query('SELECT rule_name, offset_days, start_time, end_time FROM review_rules ORDER BY rule_name');
+    const reviewRules = await query('SELECT rule_name, offset_days, start_time, end_time FROM review_rules ORDER BY rule_name') as any[];
     if (!reviewRules || !Array.isArray(reviewRules) || reviewRules.length === 0) {
       throw new Error('复习规则数据不存在');
     }
 
     // 获取单词的导入时间
-    const wordInfo = await query('SELECT imported_at FROM words WHERE word = ?', [word]);
+    const wordInfo = await query('SELECT imported_at FROM words WHERE word = ?', [word]) as any[];
     if (!wordInfo || !Array.isArray(wordInfo) || wordInfo.length === 0) {
       throw new Error('单词信息不存在');
     }
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     for (const wordData of wordsData) {
       try {
         // 检查是否为重复单词
-        const existingWord = await query('SELECT word FROM words WHERE word = ?', [wordData.word]);
+        const existingWord = await query('SELECT word FROM words WHERE word = ?', [wordData.word]) as any[];
         const isDuplicate = existingWord && Array.isArray(existingWord) && existingWord.length > 0;
 
         // 如果是重复单词且不允许覆盖，跳过
